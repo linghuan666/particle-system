@@ -6,6 +6,8 @@ A real-time 3D particle system powered by Three.js, with MediaPipe hand gesture 
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-Hands-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+**🌐 English | [中文](README_zh-CN.md)**
+
 ## ✨ Features
 
 - **6 Particle Shapes** — Heart ❤️, Flower 🌸, Saturn 🪐, Ice Cream 🍦, Fireworks 🎇, Custom Image 🖼️
