@@ -38,12 +38,19 @@ class HandTracker {
         this._updateInterval = 33; // ~30fps default
     }
 
-    async init(videoEl, canvasEl) {
+    async init(videoEl, canvasEl, onProgress) {
         this.videoElement = videoEl;
         this.canvasElement = canvasEl;
         this.canvasCtx = canvasEl.getContext('2d');
 
+        const reportProgress = (msg) => {
+            console.log('[HandTracker]', msg);
+            if (onProgress) onProgress(msg);
+        };
+
         try {
+            reportProgress('Loading model files...');
+
             this.hands = new Hands({
                 locateFile: (file) => {
                     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/${file}`;
@@ -59,12 +66,16 @@ class HandTracker {
 
             this.hands.onResults((results) => this._onResults(results));
 
-            // Pre-initialize the model if supported, otherwise it loads on first frame
-            console.log('Loading hand tracking model...');
+            // Pre-initialize the model with timeout
+            reportProgress('Initializing model...');
             if (typeof this.hands.initialize === 'function') {
-                await this.hands.initialize();
+                const initPromise = this.hands.initialize();
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Model init timeout')), 30000)
+                );
+                await Promise.race([initPromise, timeoutPromise]);
             }
-            console.log('Hand tracking ready.');
+            reportProgress('Model ready.');
 
             this.camera = new Camera(this.videoElement, {
                 onFrame: async () => {
@@ -84,6 +95,7 @@ class HandTracker {
             return true;
         } catch (error) {
             console.error('Hand tracker init failed:', error);
+            reportProgress('Init failed: ' + error.message);
             return false;
         }
     }

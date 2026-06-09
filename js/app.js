@@ -241,31 +241,45 @@ class App {
             status.classList.remove('active');
             const val = parseFloat(document.getElementById('spread-slider').value);
             this.particleSystem.setSpread(val);
+            btn.querySelector('span').textContent = 'Start Hand Tracking';
             return;
         }
 
+        // Prevent double-click
+        if (this._handLoading) return;
+        this._handLoading = true;
+
         btn.classList.add('active');
-        btn.querySelector('span').textContent = 'Initializing...';
+        btn.querySelector('span').textContent = 'Loading model...';
 
         // Init only once
         if (!this.handTracker.isInitialized) {
             const video = document.getElementById('hand-video');
             const canvas = document.getElementById('hand-canvas');
-            const success = await this.handTracker.init(video, canvas);
+            const success = await this.handTracker.init(video, canvas, (msg) => {
+                btn.querySelector('span').textContent = msg;
+            });
             if (!success) {
-                btn.querySelector('span').textContent = 'Camera Error';
-                setTimeout(() => { btn.querySelector('span').textContent = 'Start Hand Tracking'; }, 2000);
+                this._handLoading = false;
+                btn.querySelector('span').textContent = 'Load Failed - Retry';
+                btn.classList.remove('active');
+                // Allow retry by resetting init state
+                this.handTracker.isInitialized = false;
                 return;
             }
         }
 
+        btn.querySelector('span').textContent = 'Starting camera...';
         const started = await this.handTracker.start();
         if (!started) {
+            this._handLoading = false;
             btn.querySelector('span').textContent = 'Camera Denied';
             setTimeout(() => { btn.querySelector('span').textContent = 'Start Hand Tracking'; }, 2000);
+            btn.classList.remove('active');
             return;
         }
 
+        this._handLoading = false;
         this.handActive = true;
         btn.querySelector('span').textContent = 'Stop Hand Tracking';
         container.classList.add('active');
