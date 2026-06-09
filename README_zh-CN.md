@@ -5,6 +5,7 @@
 ![Three.js](https://img.shields.io/badge/Three.js-r128-black?logo=three.js)
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-Hands-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Flinghuan666%2Fparticle-system&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visitors&edge_flat=false)
 
 **🌐 [English](README.md) | 中文**
 
